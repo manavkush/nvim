@@ -108,8 +108,11 @@ require('lazy').setup({
 
       -- Adds a number of user-friendly snippets
       'rafamadriz/friendly-snippets',
-      "avneesh0612/react-nextjs-snippets"
+      'arufars/snippet-next'
+      -- "avneesh0612/react-nextjs-snippets"
     },
+    -- version = "2.*",
+    -- build = "make install_jsregexp"
   },
 
   -- Useful plugin to show you pending keybinds.
@@ -503,7 +506,7 @@ mason_lspconfig.setup_handlers {
 -- See `:help cmp`
 local cmp = require 'cmp'
 local luasnip = require 'luasnip'
-require('luasnip.loaders.from_vscode')
+require('luasnip.loaders.from_vscode').lazy_load()
 luasnip.config.setup {}
 
 cmp.setup {
