@@ -109,7 +109,13 @@ require('lazy').setup({
       -- Adds a number of user-friendly snippets
       'rafamadriz/friendly-snippets',
       -- "avneesh0612/react-nextjs-snippets"
+      {"roobert/tailwindcss-colorizer-cmp.nvim", config=true}
     },
+    opts = function (_, opts)
+      opts.formatting = {
+        format = require("tailwindcss-colorizer-cmp").formatter,
+      }
+    end,
     -- version = "2.*",
     -- build = "make install_jsregexp"
   },
@@ -549,6 +555,16 @@ cmp.setup {
   },
 }
 
+vim.keymap.set('n', '<A-j>',"<C-w>j" , { noremap = false, silent = true})
+vim.keymap.set('n', '<A-k>',"<C-w>k" , {silent = true, noremap = false})
+vim.keymap.set('n', '<A-h>',"<C-w>h" , {silent = true, noremap = false})
+vim.keymap.set('n', '<A-l>',"<C-w>l",  {silent = true, noremap = false})
+
+vim.keymap.set('t', '<esc>', [['<C-\><C-n>']], {buffer = 0, silent = true})
+vim.keymap.set('t', '<A-j>', '<C-\\><C-N><C-w>j', {silent = true})
+vim.keymap.set('t', '<A-k>', '<C-\\><C-N><C-w>k', {silent = true})
+vim.keymap.set('t', '<A-h>', '<C-\\><C-N><C-w>h', {silent = true})
+vim.keymap.set('t', '<A-l>', '<C-\\><C-N><C-w>l', {silent = true})
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
