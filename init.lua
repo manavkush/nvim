@@ -463,10 +463,16 @@ end
 --  define the property 'filetypes' to the map in question.
 local servers = {
   clangd = {
-    cmd = {
-      "clangd",
-      "--query-driver=/usr/include/c++/11"
-    }
+    -- cmd = {
+    --   "clangd",
+    --   "--query-driver=/user/include/c++/11,/usr/include/x86_64-linux-gnu/c++/11,/usr/include/c++/11/backward,/usr/lib/gcc/x86_64-linux-gnu/11/include,/usr/local/include,/usr/include/x86_64-linux-gnu,/usr/include"
+    -- },
+    -- CompileFlags = {
+    --   "-I", "/usr/include/c++/11",
+    --   -- "--suggest-missing-includes"
+    --   -- "--query-driver=/usr/include/c++/11",
+    --   -- "-I/usr/include/c++/11"
+    -- }
   },
   gopls = {},
   pyright = {},
@@ -511,7 +517,7 @@ mason_lspconfig.setup_handlers {
 -- See `:help cmp`
 local cmp = require 'cmp'
 local luasnip = require 'luasnip'
-require('luasnip.loaders.from_vscode').lazy_load()
+require('luasnip.loaders.from_vscode').lazy_load({ paths = {"./snippets"}})
 luasnip.config.setup {}
 
 cmp.setup {
