@@ -1,6 +1,6 @@
 return {
   "akinsho/toggleterm.nvim",
-  lazy = true,
+  -- lazy = true,
   config = function ()
     require("toggleterm").setup({
       direction = "horizontal",

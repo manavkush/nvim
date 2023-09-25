@@ -572,5 +572,7 @@ vim.keymap.set('t', '<A-k>', '<C-\\><C-N><C-w>k', {silent = true})
 vim.keymap.set('t', '<A-h>', '<C-\\><C-N><C-w>h', {silent = true})
 vim.keymap.set('t', '<A-l>', '<C-\\><C-N><C-w>l', {silent = true})
 
+vim.keymap.set({'n', 'i'}, '<F7>', '<cmd>CompetiTest run<CR>')
+vim.keymap.set({'n', 'i'}, '<F3><F3>', '<cmd>Format<CR>')
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
