@@ -108,7 +108,7 @@ require('lazy').setup({
 
       -- Adds a number of user-friendly snippets
       'rafamadriz/friendly-snippets',
-      -- "avneesh0612/react-nextjs-snippets"
+      "avneesh0612/react-nextjs-snippets",
       {"roobert/tailwindcss-colorizer-cmp.nvim", config=true}
     },
     opts = function (_, opts)
@@ -116,8 +116,8 @@ require('lazy').setup({
         format = require("tailwindcss-colorizer-cmp").formatter,
       }
     end,
-    -- version = "2.*",
-    -- build = "make install_jsregexp"
+    version = "2.*",
+    build = "make install_jsregexp"
   },
 
   -- Useful plugin to show you pending keybinds.
@@ -157,20 +157,24 @@ require('lazy').setup({
     -- See `:help lualine.txt`
     opts = {
       options = {
-        theme = "onedark",
+        theme = "moonfly",
+        -- theme = "onedark",
+        -- theme = "gruvbox",
         component_separators = '|',
-        section_separators = { left = '', right = '' },
+        -- section_separators = { left = '', right = '' },
       },
       sections = {
         lualine_a = {
-          { 'mode', separator = { left = '' }, right_padding = 2 },
+          -- { 'mode', separator = { left = '' }, right_padding = 2 },
+          { 'mode', right_padding = 2 },
         },
         lualine_b = { 'filename', 'branch' },
         lualine_c = { 'fileformat' },
         lualine_x = {},
         lualine_y = { 'filetype', 'progress' },
         lualine_z = {
-          { 'location', separator = { right = '' }, left_padding = 2 },
+          -- { 'location', separator = { right = '' }, left_padding = 2 },
+          { 'location', left_padding = 2 },
         },
       },
       inactive_sections = {
@@ -191,9 +195,14 @@ require('lazy').setup({
     'lukas-reineke/indent-blankline.nvim',
     -- Enable `lukas-reineke/indent-blankline.nvim`
     -- See `:help indent_blankline.txt`
+    main = "ibl",
     opts = {
-      char = '┊',
-      show_trailing_blankline_indent = false,
+      indent = {char = '┊'},
+      whitespace = {
+        remove_blankline_trail = true;
+      }
+      -- char = '┊',
+      -- show_trailing_blankline_indent = false,
     },
   },
 
@@ -238,6 +247,7 @@ require('lazy').setup({
   --
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
 { import = 'custom.plugins' },
+{ import = 'custom.themes'}
 }, {})
 
 -- [[ Setting options ]]
@@ -340,7 +350,7 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'svelte' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = false,
@@ -462,18 +472,7 @@ end
 --  If you want to override the default filetypes that your language server will attach to you can
 --  define the property 'filetypes' to the map in question.
 local servers = {
-  clangd = {
-    -- cmd = {
-    --   "clangd",
-    --   "--query-driver=/user/include/c++/11,/usr/include/x86_64-linux-gnu/c++/11,/usr/include/c++/11/backward,/usr/lib/gcc/x86_64-linux-gnu/11/include,/usr/local/include,/usr/include/x86_64-linux-gnu,/usr/include"
-    -- },
-    -- CompileFlags = {
-    --   "-I", "/usr/include/c++/11",
-    --   -- "--suggest-missing-includes"
-    --   -- "--query-driver=/usr/include/c++/11",
-    --   -- "-I/usr/include/c++/11"
-    -- }
-  },
+  clangd = {},
   gopls = {},
   pyright = {},
   rust_analyzer = {},
@@ -486,6 +485,9 @@ local servers = {
       telemetry = { enable = false },
     },
   },
+  svelte = {
+    filetypes = {"svelte", "html"}
+  }
 }
 
 -- Setup neovim lua configuration
@@ -517,8 +519,10 @@ mason_lspconfig.setup_handlers {
 -- See `:help cmp`
 local cmp = require 'cmp'
 local luasnip = require 'luasnip'
+require('luasnip.loaders.from_vscode').lazy_load()
 require('luasnip.loaders.from_vscode').lazy_load({ paths = {"./snippets"}})
-luasnip.config.setup {}
+luasnip.config.setup {
+}
 
 cmp.setup {
   snippet = {
@@ -536,15 +540,20 @@ cmp.setup {
       behavior = cmp.ConfirmBehavior.Replace,
       select = true,
     },
+
     ['<Tab>'] = cmp.mapping(function(fallback)
+      -- local copilot_keys = vim.fn['copilot#Accept']()
       if cmp.visible() then
         cmp.select_next_item()
       elseif luasnip.expand_or_locally_jumpable() then
         luasnip.expand_or_jump()
+      -- elseif copilot_keys ~= '' and type(copilot_keys) == 'string' then
+      --   vim.api.nvim_feedkeys(copilot_keys, 'i', true)
       else
         fallback()
       end
     end, { 'i', 's' }),
+
     ['<S-Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_prev_item()
@@ -561,6 +570,10 @@ cmp.setup {
   },
 }
 
+
+-- vim.cmd.colorscheme 'gruvbox'
+vim.cmd.colorscheme 'moonfly'
+
 vim.keymap.set('n', '<A-j>',"<C-w>j" , { noremap = false, silent = true})
 vim.keymap.set('n', '<A-k>',"<C-w>k" , {silent = true, noremap = false})
 vim.keymap.set('n', '<A-h>',"<C-w>h" , {silent = true, noremap = false})
@@ -574,5 +587,10 @@ vim.keymap.set('t', '<A-l>', '<C-\\><C-N><C-w>l', {silent = true})
 
 vim.keymap.set({'n', 'i'}, '<F7>', '<cmd>CompetiTest run<CR>')
 vim.keymap.set({'n', 'i'}, '<F3><F3>', '<cmd>Format<CR>')
+vim.keymap.set({'n'}, '<leader>e', vim.cmd.Ex)
+
+vim.g.copilot_no_tab_map = true
+vim.api.nvim_set_keymap("i", "<C-J>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
