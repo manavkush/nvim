@@ -88,7 +88,7 @@ require('lazy').setup({
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
+      { 'j-hui/fidget.nvim',       tag = 'legacy', opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
@@ -109,9 +109,9 @@ require('lazy').setup({
       -- Adds a number of user-friendly snippets
       'rafamadriz/friendly-snippets',
       "avneesh0612/react-nextjs-snippets",
-      {"roobert/tailwindcss-colorizer-cmp.nvim", config=true}
+      { "roobert/tailwindcss-colorizer-cmp.nvim", config = true }
     },
-    opts = function (_, opts)
+    opts = function(_, opts)
       opts.formatting = {
         format = require("tailwindcss-colorizer-cmp").formatter,
       }
@@ -121,7 +121,7 @@ require('lazy').setup({
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
+  { 'folke/which-key.nvim',          opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -135,7 +135,8 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
       on_attach = function(bufnr)
-        vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk, { buffer = bufnr, desc = '[G]o to [P]revious Hunk' })
+        vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk,
+          { buffer = bufnr, desc = '[G]o to [P]revious Hunk' })
         vim.keymap.set('n', '<leader>gn', require('gitsigns').next_hunk, { buffer = bufnr, desc = '[G]o to [N]ext Hunk' })
         vim.keymap.set('n', '<leader>ph', require('gitsigns').preview_hunk, { buffer = bufnr, desc = '[P]review [H]unk' })
       end,
@@ -157,9 +158,9 @@ require('lazy').setup({
     -- See `:help lualine.txt`
     opts = {
       options = {
-        theme = "moonfly",
+        theme = "catppuccin",
+        -- theme = "moonfly",
         -- theme = "onedark",
-        -- theme = "gruvbox",
         component_separators = '|',
         -- section_separators = { left = '', right = '' },
       },
@@ -197,9 +198,9 @@ require('lazy').setup({
     -- See `:help indent_blankline.txt`
     main = "ibl",
     opts = {
-      indent = {char = '┊'},
+      indent = { char = '┊' },
       whitespace = {
-        remove_blankline_trail = true;
+        remove_blankline_trail = true,
       }
       -- char = '┊',
       -- show_trailing_blankline_indent = false,
@@ -207,7 +208,7 @@ require('lazy').setup({
   },
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {} },
+  { 'numToStr/Comment.nvim',         opts = {} },
 
   -- Fuzzy Finder (files, lsp, etc)
   { 'nvim-telescope/telescope.nvim', branch = '0.1.x', dependencies = { 'nvim-lua/plenary.nvim' } },
@@ -246,8 +247,8 @@ require('lazy').setup({
   --    Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
-{ import = 'custom.plugins' },
-{ import = 'custom.themes'}
+  { import = 'custom.plugins' },
+  { import = 'custom.themes' }
 }, {})
 
 -- [[ Setting options ]]
@@ -323,6 +324,9 @@ require('telescope').setup {
       },
     },
   },
+  config = function()
+    require('telescope').load_extension('harpoon')
+  end
 }
 
 -- Enable telescope fzf native, if installed
@@ -350,10 +354,10 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'svelte' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'svelte', 'html' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
-  auto_install = false,
+  auto_install = true,
 
   highlight = { enable = true },
   indent = { enable = true },
@@ -409,6 +413,11 @@ require('nvim-treesitter.configs').setup {
         ['<leader>A'] = '@parameter.inner',
       },
     },
+  },
+  autotag = {
+    enable = true,
+    enable_rename = true,
+    enable_close_on_slash = false,
   },
 }
 
@@ -477,7 +486,7 @@ local servers = {
   pyright = {},
   rust_analyzer = {},
   tsserver = {},
-  html = { filetypes = { 'html', 'twig', 'hbs'} },
+  html = { filetypes = { 'html', 'twig', 'hbs' } },
   tailwindcss = {},
   lua_ls = {
     Lua = {
@@ -486,8 +495,11 @@ local servers = {
     },
   },
   svelte = {
-    filetypes = {"svelte", "html"}
-  }
+    filetypes = { "svelte", "html" }
+  },
+  templ = {
+    filetypes = { "templ", "go", "html"}
+  },
 }
 
 -- Setup neovim lua configuration
@@ -520,7 +532,7 @@ mason_lspconfig.setup_handlers {
 local cmp = require 'cmp'
 local luasnip = require 'luasnip'
 require('luasnip.loaders.from_vscode').lazy_load()
-require('luasnip.loaders.from_vscode').lazy_load({ paths = {"./snippets"}})
+require('luasnip.loaders.from_vscode').lazy_load({ paths = { "./snippets" } })
 luasnip.config.setup {
 }
 
@@ -547,8 +559,8 @@ cmp.setup {
         cmp.select_next_item()
       elseif luasnip.expand_or_locally_jumpable() then
         luasnip.expand_or_jump()
-      -- elseif copilot_keys ~= '' and type(copilot_keys) == 'string' then
-      --   vim.api.nvim_feedkeys(copilot_keys, 'i', true)
+        -- elseif copilot_keys ~= '' and type(copilot_keys) == 'string' then
+        --   vim.api.nvim_feedkeys(copilot_keys, 'i', true)
       else
         fallback()
       end
@@ -570,27 +582,30 @@ cmp.setup {
   },
 }
 
+-- additional filetypes
+vim.filetype.add({
+ extension = {
+  templ = "templ",
+ },
+})
+
 
 -- vim.cmd.colorscheme 'gruvbox'
-vim.cmd.colorscheme 'moonfly'
+vim.cmd.colorscheme 'catppuccin'
 
-vim.keymap.set('n', '<A-j>',"<C-w>j" , { noremap = false, silent = true})
-vim.keymap.set('n', '<A-k>',"<C-w>k" , {silent = true, noremap = false})
-vim.keymap.set('n', '<A-h>',"<C-w>h" , {silent = true, noremap = false})
-vim.keymap.set('n', '<A-l>',"<C-w>l",  {silent = true, noremap = false})
+vim.keymap.set({ 'n', 't' }, '<A-h>', '<CMD>NavigatorLeft<CR>')
+vim.keymap.set({ 'n', 't' }, '<A-l>', '<CMD>NavigatorRight<CR>')
+vim.keymap.set({ 'n', 't' }, '<A-k>', '<CMD>NavigatorUp<CR>')
+vim.keymap.set({ 'n', 't' }, '<A-j>', '<CMD>NavigatorDown<CR>')
 
-vim.keymap.set('t', '<esc>', [['<C-\><C-n>']], {buffer = 0, silent = true})
-vim.keymap.set('t', '<A-j>', '<C-\\><C-N><C-w>j', {silent = true})
-vim.keymap.set('t', '<A-k>', '<C-\\><C-N><C-w>k', {silent = true})
-vim.keymap.set('t', '<A-h>', '<C-\\><C-N><C-w>h', {silent = true})
-vim.keymap.set('t', '<A-l>', '<C-\\><C-N><C-w>l', {silent = true})
-
-vim.keymap.set({'n', 'i'}, '<F7>', '<cmd>CompetiTest run<CR>')
-vim.keymap.set({'n', 'i'}, '<F3><F3>', '<cmd>Format<CR>')
-vim.keymap.set({'n'}, '<leader>e', vim.cmd.Ex)
+vim.keymap.set({ 'n', 'i' }, '<F7>', '<cmd>CompetiTest run<CR>')
+vim.keymap.set({ 'n', 'i' }, '<F3><F3>', '<cmd>Format<CR>')
+vim.keymap.set({ 'n' }, '<leader>e', vim.cmd.Ex)
 
 vim.g.copilot_no_tab_map = true
 vim.api.nvim_set_keymap("i", "<C-J>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
+
+vim.o.termguicolors = true
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
