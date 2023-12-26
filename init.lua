@@ -418,6 +418,7 @@ require('nvim-treesitter.configs').setup {
     enable = true,
     enable_rename = true,
     enable_close_on_slash = false,
+    filetypes = { "html", "javascript", "typescript", "typescriptreact", "javascriptreact", "svelte", "templ" },
   },
 }
 
@@ -487,7 +488,16 @@ local servers = {
   rust_analyzer = {},
   tsserver = {},
   html = { filetypes = { 'html', 'twig', 'hbs' } },
-  tailwindcss = {},
+  tailwindcss = {
+    filetypes = { "html", "css", "scss", "javascript", "javascriptreact", "typescript", "typescriptreact", "svelte",
+      "vue", "templ" },
+    init_options = {
+      userLanguages = {
+        svelte = "html",
+        templ = "html"
+      }
+    }
+  },
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
@@ -498,7 +508,7 @@ local servers = {
     filetypes = { "svelte", "html" }
   },
   templ = {
-    filetypes = { "templ", "go", "html"}
+    filetypes = { "templ" }
   },
 }
 
@@ -584,14 +594,15 @@ cmp.setup {
 
 -- additional filetypes
 vim.filetype.add({
- extension = {
-  templ = "templ",
- },
+  extension = {
+    templ = "templ",
+  },
 })
 
 
 -- vim.cmd.colorscheme 'gruvbox'
 vim.cmd.colorscheme 'catppuccin'
+-- vim.o.foldmethod = 'indent'
 
 vim.keymap.set({ 'n', 't' }, '<A-h>', '<CMD>NavigatorLeft<CR>')
 vim.keymap.set({ 'n', 't' }, '<A-l>', '<CMD>NavigatorRight<CR>')
@@ -601,6 +612,7 @@ vim.keymap.set({ 'n', 't' }, '<A-j>', '<CMD>NavigatorDown<CR>')
 vim.keymap.set({ 'n', 'i' }, '<F7>', '<cmd>CompetiTest run<CR>')
 vim.keymap.set({ 'n', 'i' }, '<F3><F3>', '<cmd>Format<CR>')
 vim.keymap.set({ 'n' }, '<leader>e', vim.cmd.Ex)
+vim.keymap.set({ 'n' }, '<leader>o', '<C-w>v')
 
 vim.g.copilot_no_tab_map = true
 vim.api.nvim_set_keymap("i", "<C-J>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
@@ -609,3 +621,17 @@ vim.o.termguicolors = true
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+-- Format current buffer using LSP.
+vim.api.nvim_create_autocmd(
+  {
+    -- 'BufWritePre' event triggers just before a buffer is written to file.
+    "BufWritePre"
+  },
+  {
+    pattern = { "*.templ", "*.go", "*.lua", "*.ts", "*.tsx", "*.js", "*.jsx", "*.svelte", "*.html", "*.css" },
+    callback = function()
+      -- Format the current buffer using Neovim's built-in LSP (Language Server Protocol).
+      vim.lsp.buf.format()
+    end,
+  }
+)
