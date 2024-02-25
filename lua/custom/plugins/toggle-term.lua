@@ -1,7 +1,7 @@
 return {
   "akinsho/toggleterm.nvim",
-  -- lazy = true,
-  config = function ()
+  lazy = false,
+  config = function()
     require("toggleterm").setup({
       direction = "horizontal",
       open_mapping = [[<A-\>]],

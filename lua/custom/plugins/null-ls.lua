@@ -1,5 +1,5 @@
 return {
-  "jose-elias-alvarez/null-ls.nvim",
+  "nvimtools/none-ls.nvim",
   config = function()
     local null_ls = require("null-ls")
 
@@ -7,7 +7,7 @@ return {
       sources = {
         null_ls.builtins.formatting.prettierd.with({
           filetypes = { "html", "css", "yaml", "markdown", "json", "typescript", "react-typescript", "javascript",
-            "react-javascript", "lua" },
+            "react-javascript" },
         })
         -- null_ls.builtins.diagnostics.eslint_d.with({
         --   diagnostics_format = '[eslint] #{m}\n(#{c})'

@@ -1,5 +1,5 @@
 return {
- "MunifTanjim/prettier.nvim",
+  "MunifTanjim/prettier.nvim",
   config = function()
     local status, prettier = pcall(require, "prettier")
     if not status then return end
@@ -7,19 +7,19 @@ return {
     prettier.setup {
       bin = 'prettierd',
       filetypes = {
-      "css",
+        "css",
         "html",
-      "javascript",
-      "javascriptreact",
-      "typescript",
-      "typescriptreact",
-      "json",
-      "scss",
-      "less",
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact",
+        "json",
+        "scss",
+        "less",
         "markdown",
         "yaml",
         "lua",
+      }
     }
-   }
   end
 }

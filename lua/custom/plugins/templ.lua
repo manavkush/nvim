@@ -1,6 +1,8 @@
 return {
 	"vrischmann/tree-sitter-templ",
-	config = function ()
+	lazy = true,
+	ft = { "templ", "go", "html" },
+	config = function()
 		require("tree-sitter-templ").setup({})
 	end
 }

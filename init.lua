@@ -41,13 +41,14 @@ P.S. You can delete this when you're done too. It's your config now :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.wo.relativenumber = true
-vim.o.tabstop = 2
+vim.o.tabstop = 4
 vim.o.expandtab = true
-vim.o.softtabstop = 2
-vim.o.shiftwidth = 2
+vim.o.softtabstop = 4
+vim.o.shiftwidth = 4
+vim.o.conceallevel = 1
 -- Install package manager
---    https://github.com/folke/lazy.nvim
---    `:help lazy.nvim.txt` for more info
+-- https://github.com/folke/lazy.nvim
+-- `:help lazy.nvim.txt` for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system {
@@ -82,16 +83,15 @@ require('lazy').setup({
     -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     dependencies = {
+      { 'folke/neoconf.nvim',      cmd = 'Neoconf', config = true },
+      { 'folke/neodev.nvim',       config = true },
       -- Automatically install LSPs to stdpath for neovim
       { 'williamboman/mason.nvim', config = true },
       'williamboman/mason-lspconfig.nvim',
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim',       tag = 'legacy', opts = {} },
-
-      -- Additional lua configuration, makes nvim stuff amazing!
-      'folke/neodev.nvim',
+      { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
     },
   },
 
@@ -109,7 +109,8 @@ require('lazy').setup({
       -- Adds a number of user-friendly snippets
       'rafamadriz/friendly-snippets',
       "avneesh0612/react-nextjs-snippets",
-      { "roobert/tailwindcss-colorizer-cmp.nvim", config = true }
+      { "roobert/tailwindcss-colorizer-cmp.nvim", config = true },
+      "solidjs-community/solid-snippets",
     },
     opts = function(_, opts)
       opts.formatting = {
@@ -147,9 +148,9 @@ require('lazy').setup({
     -- Theme inspired by Atom
     'navarasu/onedark.nvim',
     priority = 1000,
-    config = function()
-      vim.cmd.colorscheme 'onedark'
-    end,
+    -- config = function()
+    --   vim.cmd.colorscheme 'onedark'
+    -- end,
   },
 
   {
@@ -158,9 +159,10 @@ require('lazy').setup({
     -- See `:help lualine.txt`
     opts = {
       options = {
-        theme = "catppuccin",
+        -- theme = "catppuccin",
+        -- theme = "rose-pine",
         -- theme = "moonfly",
-        -- theme = "onedark",
+        theme = "kanagawa",
         component_separators = '|',
         -- section_separators = { left = '', right = '' },
       },
@@ -354,12 +356,16 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'svelte', 'html' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim',
+    'svelte', 'html' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = true,
 
-  highlight = { enable = true },
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting = true,
+  },
   indent = { enable = true },
   incremental_selection = {
     enable = true,
@@ -486,6 +492,7 @@ local servers = {
   gopls = {},
   pyright = {},
   rust_analyzer = {},
+  volar = { filetypes = { "vue", "typescript", "javascript" } },
   tsserver = {},
   html = { filetypes = { 'html', 'twig', 'hbs' } },
   tailwindcss = {
@@ -513,7 +520,6 @@ local servers = {
 }
 
 -- Setup neovim lua configuration
-require('neodev').setup()
 
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -526,8 +532,13 @@ mason_lspconfig.setup {
   ensure_installed = vim.tbl_keys(servers),
 }
 
-mason_lspconfig.setup_handlers {
+mason_lspconfig.setup_handlers({
   function(server_name)
+    -- Checking if specific lsps are disabled in neoconf
+    if require("neoconf").get(server_name .. ".disable") then
+      return
+    end
+    -- If not disabled, setup lsp
     require('lspconfig')[server_name].setup {
       capabilities = capabilities,
       on_attach = on_attach,
@@ -535,7 +546,7 @@ mason_lspconfig.setup_handlers {
       filetypes = (servers[server_name] or {}).filetypes,
     }
   end
-}
+})
 
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
@@ -556,7 +567,7 @@ cmp.setup {
     ['<C-n>'] = cmp.mapping.select_next_item(),
     ['<C-p>'] = cmp.mapping.select_prev_item(),
     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    -- ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<C-Space>'] = cmp.mapping.complete {},
     ['<CR>'] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
@@ -601,7 +612,9 @@ vim.filetype.add({
 
 
 -- vim.cmd.colorscheme 'gruvbox'
-vim.cmd.colorscheme 'catppuccin'
+-- vim.cmd.colorscheme 'catppuccin-mocha'
+vim.cmd.colorscheme 'kanagawa'
+-- vim.cmd.colorscheme 'rose-pine'
 -- vim.o.foldmethod = 'indent'
 
 vim.keymap.set({ 'n', 't' }, '<A-h>', '<CMD>NavigatorLeft<CR>')
@@ -616,6 +629,8 @@ vim.keymap.set({ 'n' }, '<leader>o', '<C-w>v')
 
 vim.g.copilot_no_tab_map = true
 vim.api.nvim_set_keymap("i", "<C-J>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
+vim.api.nvim_set_keymap("n", "<C-f>", '<cmd>!tmux neww tmux-sessionizer<CR>', { silent = true })
+vim.api.nvim_set_keymap("n", "<leader>nd", "<cmd>NoiceDismiss<CR>", { desc = "Dismiss Noice" })
 
 vim.o.termguicolors = true
 
@@ -628,7 +643,8 @@ vim.api.nvim_create_autocmd(
     "BufWritePre"
   },
   {
-    pattern = { "*.templ", "*.go", "*.lua", "*.ts", "*.tsx", "*.js", "*.jsx", "*.svelte", "*.html", "*.css" },
+    -- pattern = { "*.templ", "*.go", "*.lua", "*.ts", "*.tsx", "*.js", "*.jsx", "*.svelte", "*.html", "*.css", "*.vue" },
+    pattern = { "*.templ", "*.go", "*.lua", "*.js", "*.jsx", "*.svelte", "*.html", "*.css", "*.vue" },
     callback = function()
       -- Format the current buffer using Neovim's built-in LSP (Language Server Protocol).
       vim.lsp.buf.format()
