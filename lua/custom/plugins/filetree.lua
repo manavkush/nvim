@@ -11,7 +11,7 @@ return {
     "MunifTanjim/nui.nvim",
   },
   keys = {
-    { '<C-b>', '<cmd>Neotree toggle<cr>' }
+    { '<C-b>', '<cmd>Neotree toggle position=right<cr>' }
   },
   config = function()
     require('neo-tree').setup {}
