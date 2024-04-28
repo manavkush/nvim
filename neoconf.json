@@ -1,1 +1,3 @@
-../../dotfiles/.config/nvim/neoconf.json
+{
+"volar": { "disable": true }
+}

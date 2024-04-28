@@ -1,1 +1,8 @@
-../../../../../dotfiles/.config/nvim/lua/custom/plugins/tailwind.lua
+return {
+  'NvChad/nvim-colorizer.lua',
+  opts = {
+    user_default_options = {
+      tailwind = true,
+    },
+  },
+}
