@@ -4,3 +4,5 @@ vim.api.nvim_set_keymap('n', '<leader>nd', '<cmd>NoiceDismiss<CR>', { desc = 'Di
 
 vim.keymap.set({ 'n' }, '<leader>e', '<cmd>Oil<CR>')
 vim.keymap.set({ 'n' }, '<leader>o', '<C-w>v')
+vim.keymap.set({ 'n' }, '<leader>cn', '<cmd>cnext<CR>')
+vim.keymap.set({ 'n' }, '<leader>cp', '<cmd>cprev<CR>')

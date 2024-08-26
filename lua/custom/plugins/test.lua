@@ -9,7 +9,8 @@ return {
     'nvim-neotest/neotest-go',
   },
   keys = {
-    { '<leader>t', '<cmd>Neotest run<cr>' },
+    { '<leader>tt', '<cmd>Neotest run<cr>', 'Neotest run' },
+    { '<leader>to', '<cmd>Neotest output<cr>', 'Neotest output' },
   },
   lazy = true,
   config = function()

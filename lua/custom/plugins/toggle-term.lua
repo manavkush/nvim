@@ -3,7 +3,7 @@ return {
   lazy = false,
   config = function()
     require('toggleterm').setup {
-      direction = 'horizontal',
+      direction = 'float',
       open_mapping = [[<A-\>]],
       shade_terminals = false,
     }
