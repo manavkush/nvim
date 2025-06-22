@@ -6,11 +6,11 @@ return {
     'nvim-treesitter/nvim-treesitter',
 
     -- Your other test adapters here
-    'nvim-neotest/neotest-go',
+    { 'fredrikaverpil/neotest-golang', version = '*' }, -- Installation
   },
   keys = {
     { '<leader>tt', '<cmd>Neotest run<cr>', 'Neotest run' },
-    { '<leader>to', '<cmd>Neotest output<cr>', 'Neotest output' },
+    { '<leader>to', '<cmd>Neotest output<cr>', 'Neotest console' },
   },
   lazy = true,
   config = function()
@@ -28,7 +28,9 @@ return {
     require('neotest').setup {
       -- your neotest config here
       adapters = {
-        require 'neotest-go',
+        require 'neotest-golang' {
+          enable_testify = true,
+        },
       },
     }
   end,

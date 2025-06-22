@@ -6,7 +6,8 @@ return {
   -- Optional; default configuration will be used if setup isn't called.
   config = function()
     require('everforest').setup {
-      -- Your config here
+      background = 'hard',
+      dim_inactive_windows = true,
     }
   end,
 }

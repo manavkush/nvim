@@ -6,3 +6,8 @@ vim.keymap.set({ 'n' }, '<leader>e', '<cmd>Oil<CR>')
 vim.keymap.set({ 'n' }, '<leader>o', '<C-w>v')
 vim.keymap.set({ 'n' }, '<leader>cn', '<cmd>cnext<CR>')
 vim.keymap.set({ 'n' }, '<leader>cp', '<cmd>cprev<CR>')
+
+vim.keymap.set('n', '<C-d>', '<C-d>zz')
+vim.keymap.set('n', '<C-u>', '<C-u>zz')
+
+vim.keymap.set('x', '<leader>p', [["_dP]])
