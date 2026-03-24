@@ -79,8 +79,8 @@ vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
+vim.keymap.set('n', '[d', function() vim.diagnostic.jump({ count = -1 }) end, { desc = 'Go to previous [D]iagnostic message' })
+vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1 }) end, { desc = 'Go to next [D]iagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
@@ -124,7 +124,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
   vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
 end ---@diagnostic disable-next-line: undefined-field
@@ -552,15 +552,15 @@ require('lazy').setup({
       --  You can press `g?` for help in this menu.
       require('mason').setup()
 
-      -- You can add other tools here that you want Mason to install
-      -- for you, so that they are available from within Neovim.
-      local ensure_installed = vim.tbl_keys(servers or {})
-      vim.list_extend(ensure_installed, {
-        'stylua', -- Used to format Lua code
-      })
-      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+      -- Filter out servers that aren't in mason-lspconfig
+      -- 'buf' needs to be installed manually since it's not available through mason
+      local mason_servers = vim.tbl_filter(function(name)
+        return name ~= 'buf'
+      end, vim.tbl_keys(servers or {}))
 
       require('mason-lspconfig').setup {
+        ensure_installed = mason_servers,
+        automatic_installation = false,
         handlers = {
           jdtls = function()
             require('java').setup {
@@ -837,50 +837,80 @@ require('lazy').setup({
         additional_vim_regex_highlighting = { 'ruby' },
       },
       indent = { enable = true, disable = { 'ruby' } },
-      -- textobjects = {
-      --   select = {
-      --     enable = true,
-      --     lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-      --     keymaps = {
-      --       -- You can use the capture groups defined in textobjects.scm
-      --       ['aa'] = '@parameter.outer',
-      --       ['ia'] = '@parameter.inner',
-      --       ['af'] = '@function.outer',
-      --       ['if'] = '@function.inner',
-      --       ['ac'] = '@class.outer',
-      --       ['ic'] = '@class.inner',
-      --     },
-      --   },
-      --   move = {
-      --     enable = true,
-      --     set_jumps = true, -- whether to set jumps in the jumplist
-      --     goto_next_start = {
-      --       [']m'] = '@function.outer',
-      --       [']]'] = '@class.outer',
-      --     },
-      --     goto_next_end = {
-      --       [']M'] = '@function.outer',
-      --       [']['] = '@class.outer',
-      --     },
-      --     goto_previous_start = {
-      --       ['[m'] = '@function.outer',
-      --       ['[['] = '@class.outer',
-      --     },
-      --     goto_previous_end = {
-      --       ['[M'] = '@function.outer',
-      --       ['[]'] = '@class.outer',
-      --     },
-      --   },
-      --   swap = {
-      --     enable = true,
-      --     swap_next = {
-      --       ['<leader>a'] = '@parameter.inner',
-      --     },
-      --     swap_previous = {
-      --       ['<leader>A'] = '@parameter.inner',
-      --     },
-      --   },
-      -- },
+      textobjects = {
+        select = {
+          enable = true,
+          lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+          keymaps = {
+            -- You can use the capture groups defined in textobjects.scm
+            ['aa'] = '@parameter.outer',
+            ['ia'] = '@parameter.inner',
+            ['af'] = '@function.outer',
+            ['if'] = '@function.inner',
+            ['ac'] = '@class.outer',
+            ['ic'] = '@class.inner',
+            ['a='] = '@assignment.outer',
+            ['i='] = '@assignment.inner',
+            ['l='] = '@assignment.lhs',
+            ['r='] = '@assignment.rhs',
+            ['ai'] = '@conditional.outer',
+            ['ii'] = '@conditional.inner',
+            ['al'] = '@loop.outer',
+            ['il'] = '@loop.inner',
+            ['am'] = '@function.outer',
+            ['im'] = '@function.inner',
+          },
+        },
+        move = {
+          enable = true,
+          set_jumps = true, -- whether to set jumps in the jumplist
+          goto_next_start = {
+            [']m'] = '@function.outer',
+            [']]'] = '@class.outer',
+            [']f'] = '@call.outer',
+            [']c'] = '@class.outer',
+            [']i'] = '@conditional.outer',
+            [']l'] = '@loop.outer',
+          },
+          goto_next_end = {
+            [']M'] = '@function.outer',
+            [']['] = '@class.outer',
+            [']F'] = '@call.outer',
+            [']C'] = '@class.outer',
+            [']I'] = '@conditional.outer',
+            [']L'] = '@loop.outer',
+          },
+          goto_previous_start = {
+            ['[m'] = '@function.outer',
+            ['[['] = '@class.outer',
+            ['[f'] = '@call.outer',
+            ['[c'] = '@class.outer',
+            ['[i'] = '@conditional.outer',
+            ['[l'] = '@loop.outer',
+          },
+          goto_previous_end = {
+            ['[M'] = '@function.outer',
+            ['[]'] = '@class.outer',
+            ['[F'] = '@call.outer',
+            ['[C'] = '@class.outer',
+            ['[I'] = '@conditional.outer',
+            ['[L'] = '@loop.outer',
+          },
+        },
+        swap = {
+          enable = true,
+          swap_next = {
+            ['<leader>a'] = '@parameter.inner',
+            ['<leader>na'] = '@parameter.inner',
+            ['<leader>nm'] = '@function.outer',
+          },
+          swap_previous = {
+            ['<leader>A'] = '@parameter.inner',
+            ['<leader>pa'] = '@parameter.inner',
+            ['<leader>pm'] = '@function.outer',
+          },
+        },
+      },
     },
 
     config = function(_, opts)
@@ -889,7 +919,7 @@ require('lazy').setup({
       -- Prefer git instead of curl in order to improve connectivity in some environments
       require('nvim-treesitter.install').prefer_git = true
       ---@diagnostic disable-next-line: missing-fields
-      require('nvim-treesitter.configs').setup(opts)
+      require('nvim-treesitter').setup(opts)
 
       -- There are additional nvim-treesitter modules that you can use to interact
       -- with nvim-treesitter. You should go explore a few and see what interests you:
